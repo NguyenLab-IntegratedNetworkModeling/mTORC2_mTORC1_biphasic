@@ -1,0 +1,136 @@
+﻿********** MODEL NAME
+GBL-ubi_model
+
+********** MODEL NOTES
+
+********** MODEL STATE INFORMATION
+InsR(0) = 100 
+pInsR(0) = 0 
+IRS(0) = 100
+pIRS(0) = 0
+otud(0) = 100 
+aotud(0) = 0 
+GBL(0) = 0 
+GBLubi(0) = 100 
+Sin1(0) = 100 
+mTORC2(0) = 0 
+pmTORC2(0) = 0 
+pmTORC1(0) = 0 
+Akt(0) = 100 
+pAkt473(0) = 0 
+pAkt308(0) = 0 
+pAkt308473(0) = 0
+s6k1(0) = 100 
+ps6k1(0) = 0 
+TSC2(0) = 100
+pTSC2(0) = 0 
+funcmTORC1(0) = 100
+********** MODEL PARAMETERS
+
+
+kf1 = 
+km1 = 
+ki1 = 
+kr1 = 
+kf2 = 
+km2 = 
+ki2 = 
+kr2 = 
+kf3 = 
+km3 = 
+kr3 = 
+kf4 = 
+km4 = 
+kr4 = 
+kf6 = 
+kr6 = 
+kf7 = 
+km7 = 
+kr7 = 
+kf8 = 
+km8 = 
+kr8 = 
+km9 = 
+km10 = 
+kf11a = 
+kf11b = 
+km11 = 
+kr11 = 
+kf12a = 
+kf12b = 
+km12 = 
+kr12 = 
+kf13 = 
+ki13 = 
+kr13 = 
+kf14 = 
+km14 = 
+kr14 = 
+InsB0=
+Ins0 = 
+Timeinput1 = 5000 
+Tinfinput1 = 2000 
+traf = 100 
+
+********** MODEL VARIABLES
+
+Ins = Ins0 *piecewiseIQM(1,andIQM(ge(time,Timeinput1),lt(time,Timeinput1+Tinfinput1)),0)  
+phosphoGBLubir=GBLubi;
+phosphoAkt473r = pAkt473+pAkt308473;
+phosphoAkt308r = pAkt308+pAkt308473;
+phosphos6k1r = ps6k1;
+phosphoTSC2r = pTSC2;
+totalmTORC2r = mTORC2+pmTORC2;
+
+********** MODEL REACTIONS
+
+InsR => pInsR: R1
+	vf = kf1 * InsR*(Ins+InsB0)/((km1 + InsR)*(1+ (ki1*pmTORC1))) - kr1*pInsR 
+
+IRS => pIRS : R2
+	vf = kf2*IRS*pInsR/((km2 + IRS)*(1+ (ki2*ps6k1))) - kr2*pIRS
+
+otud => aotud : R3
+	vf = kf3 * pIRS * otud/(km3+otud) - kr3*aotud
+
+GBLubi => GBL : R4
+	vf = kf4 * aotud * GBLubi/(km4+GBLubi) - kr4*GBL*traf 
+
+GBL+Sin1 => mTORC2 : R6
+	vf = kf6*Sin1*GBL - kr6*mTORC2
+
+Akt => pAkt308 : R7
+	vf = kf7 * pIRS *Akt/(km7 + Akt) - kr7 * pAkt308
+
+Akt => pAkt473 : R8
+	vf = kf8 * pmTORC2 * Akt/(km8 + Akt)  - kr8*pAkt473
+
+pAkt473 => pAkt308473 : R9
+	vf = kf7 * pIRS * pAkt473 /(km9 + pAkt473) - kr7*pAkt308473 
+
+pAkt308 => pAkt308473 : R10
+	vf = kf8 * pmTORC2 * pAkt308 /(km10 + pAkt308 )  - kr8*pAkt308473 
+
+mTORC2 => pmTORC2 : R11
+	vf = (kf11a* pAkt308 + kf11b* pAkt308473)* mTORC2/(km11 + mTORC2) - kr11*pmTORC2
+
+TSC2 => pTSC2 : R12
+	vf = TSC2 *(kf12a * pAkt308+ kf12b*pAkt308473)/(km12 + TSC2)-kr12*pTSC2 
+
+funcmTORC1 => pmTORC1 : R13
+    vf = kf13 *funcmTORC1/(1+ki13*TSC2) - kr13*pmTORC1
+
+s6k1 => ps6k1 : R14
+	vf = kf14*pmTORC1*(s6k1/(km14+s6k1)) - kr14*ps6k1
+
+
+
+
+********** MODEL FUNCTIONS
+
+
+********** MODEL EVENTS
+
+
+********** MODEL MATLAB FUNCTIONS
+
